@@ -32,3 +32,7 @@ The code is inspired by the article [Extending PHP 5.3 Closures with Serializati
 Concerns
 ========
 I haven't tried using static variables in the test closures, so I don't know how the code will behave.
+
+License
+=======
+This software is released under the MIT license.

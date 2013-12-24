@@ -20,6 +20,21 @@ $c = unserialize($str);
 $c('bagia', 'unserialized closure');
 ```
 
+Known limitations
+=================
+SerializableClosure objects must be created inside a ```new SerializableClosure()``` clause. It is not possible to do this :
+```php
+// Will make your code unstable !!!
+$closure = function() { echo "Hello world"; }
+$sc = new SerializableClosure($closure);
+```
+
+Do:
+```php
+// Is fine:
+$sc = new SerializableClosure(function() { echo "Hello world"; });
+```
+
 Prerequisites
 =============
 - PHP 5.3+

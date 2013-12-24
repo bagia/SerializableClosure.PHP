@@ -10,6 +10,9 @@ class SerializableClosure  {
 
     protected $_static_variables; // To store the values of the variables given in the use() clause
     protected $_code; // To store the code as a string
+    protected $_file_name;
+    protected $_start_line;
+    protected $_end_line;
 
     protected $_closure; // To store the actual Closure object
 
@@ -19,6 +22,11 @@ class SerializableClosure  {
      */
     public function __construct(Closure $closure) {
         $this->_closure = $closure;
+
+        $reflection = $this->_getReflection();
+        $this->_file_name = $reflection->getFileName();
+        $this->_start_line = $reflection->getStartLine();
+        $this->_end_line = $reflection->getEndLine();
     }
 
     /**
@@ -36,7 +44,7 @@ class SerializableClosure  {
     public function __sleep() {
         $this->_saveStaticVariables();
         $this->_extractCode();
-        return array('_static_variables', '_code');
+        return array('_static_variables', '_code', '_file_name', '_start_line', '_end_line');
     }
 
     /**
@@ -68,16 +76,10 @@ class SerializableClosure  {
      * Extracts the code of the closure from the file it is stored into.
      */
     protected function _extractCode() {
-        $reflection = $this->_getReflection();
-
         // Get the actual code
-        $file_name = $reflection->getFileName();
-        $start_line = $reflection->getStartLine();
-        $end_line = $reflection->getEndLine();
-
-        $source = file($file_name);
-        $start_index = $start_line - 1;
-        $end_index = $end_line - 1;
+        $source = file($this->_file_name);
+        $start_index = $this->_start_line - 1;
+        $end_index = $this->_end_line - 1;
 
         // narrow-down the code
         $source = array_slice($source, $start_index, $end_index - $start_index + 1);

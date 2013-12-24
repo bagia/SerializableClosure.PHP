@@ -45,7 +45,8 @@ class SerializableClosure  {
     public function __wakeup() {
         // restore the original context
         foreach($this->_static_variables as $name => $value) {
-            $$name = $value;
+            if (!isset($$name))
+                $$name = $value;
         }
 
         // re-create the closure object
@@ -61,6 +62,7 @@ class SerializableClosure  {
     protected function _saveStaticVariables() {
         $static_variables = $this->_getReflection()->getStaticVariables();
         $this->_static_variables = $static_variables;
+        var_dump($static_variables);
     }
 
     /**

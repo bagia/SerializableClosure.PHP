@@ -51,10 +51,16 @@ class SerializableClosure  {
      * Called prior to unserialization
      */
     public function __wakeup() {
+        $current_values = array();
+
         // restore the original context
         foreach($this->_static_variables as $name => $value) {
-            if (!isset($$name))
-                $$name = $value;
+            // if the variable already is set, save the current
+            // value temporarily
+            if (isset($$name)) {
+                $current_values[$name] = $$name;
+            }
+            $$name = $value;
         }
 
         // re-create the closure object
@@ -62,6 +68,11 @@ class SerializableClosure  {
         $eval = '$closure = ' . $this->_code . ';';
         eval($eval);
         $this->_closure = $closure;
+
+        // restore the variables that were overwritten
+        foreach($current_values as $name => $value) {
+            $$name = $value;
+        }
     }
 
     /**

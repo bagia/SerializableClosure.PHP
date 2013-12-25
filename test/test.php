@@ -7,13 +7,11 @@ require_once("../src/SerializableClosure.php");
 $foo = "bar";
 
 echo "PHP Closure:\n";
-$php_closure = function($name, $platform) use ($foo) {
+$php_closure = function ($name, $platform) use ($foo) {
     echo "Hello {$name} on {$platform}\n";
     echo "Foo = {$foo}\n";
 };
 $php_closure('bagia', 'github');
-
-echo "\n\n";
 
 echo "Serializable Closure:\n";
 $closure = new SerializableClosure(function($name, $platform) use ($foo) {
@@ -26,4 +24,28 @@ $closure('bagia', 'github');
 $s = serialize($closure);
 $c = unserialize($s);
 $c('bagia', 'unserialized closure');
+
+echo "\n\n";
+
+echo "PHP Closure:\n";
+$php_closures = array();
+for($i = 0; $i < 5; $i++) {
+    $php_closures[] = function () use ($i) { echo "Hello world {$i}\n"; };
+}
+unset($i);
+foreach($php_closures as $php_closure) {
+    $php_closure();
+}
+
+echo "Serializable Closure:\n";
+$closures = array();
+for($i = 0; $i < 5; $i++) {
+    $closures[] = serialize(new SerializableClosure(function () use ($i) { echo "Hello world {$i}\n"; }));
+}
+unset($i);
+foreach($closures as $closure) {
+    $closure = unserialize($closure);
+    $closure();
+}
+
 

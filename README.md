@@ -22,17 +22,19 @@ $c('bagia', 'unserialized closure');
 
 Known limitations
 =================
-SerializableClosure objects must be created inside a ```new SerializableClosure()``` clause. It is not possible to do this :
+Nested closures should not be created inline:
 ```php
 // Will make your code unstable !!!
-$closure = function() { echo "Hello world"; }
-$sc = new SerializableClosure($closure);
+$closure = function() { $inner_closure = function () { echo "Hello world";} $s = new SerializableClosure($inner_closure); ... };
 ```
 
 Do:
 ```php
-// Is fine:
-$sc = new SerializableClosure(function() { echo "Hello world"; });
+// Must work:
+$closure = function() {
+    $inner_closure = function () { echo "Hello world"; }
+    $s = new SerializableClosure($inner_closure);
+... };
 ```
 
 Prerequisites

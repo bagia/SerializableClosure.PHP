@@ -96,8 +96,8 @@ class SerializableClosure  {
         $source = array_slice($source, $start_index, $end_index - $start_index + 1);
         $source = implode("", $source);
 
-        preg_match_all('#new\s*SerializableClosure\(\s*(.*)\)#ims', $source, $matches);
-        $source = $matches[1][0];
+        preg_match_all('#function\s*\((.*)}#ims', $source, $matches);
+        $source = $matches[0][0];
 
         // now we need to count the number of parenthesis to remove extra-code
         $open = mb_substr_count($source, "(");

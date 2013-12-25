@@ -48,4 +48,24 @@ foreach($closures as $closure) {
     $closure();
 }
 
+echo "\n\n";
 
+echo "Weird case, correct indentation:\n";
+$test = function ($closure) {
+    /*$closure = new SerializableClosure($closure);
+    $closure = serialize($closure);
+    $closure = unserialize($closure);*/
+    $closure();
+};
+$test(function () use ($foo) {
+    $closure = function() use ($foo) { echo "Hello {$foo}\n"; };
+    $closure = new SerializableClosure($closure);
+    $closure = serialize($closure);
+    $closure = unserialize($closure); $closure();
+});
+
+echo "Weird case, wrong indentation:\n";
+$test = function ($closure) { /*$closure = new SerializableClosure($closure); $closure = serialize($closure); $closure = unserialize($closure);*/ $closure(); };
+$test(function () use ($foo) { $closure = function() use ($foo) { echo "Hello {$foo}\n"; }; $closure = new SerializableClosure($closure); $closure = serialize($closure); $closure = unserialize($closure); $closure(); });
+
+echo "\n\n";
